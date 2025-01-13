@@ -8,3 +8,7 @@
     - Para criar uma rota dinâmica criamos uma pasta dentre [] e o nome do parametro vai dentro, por exemplo [id], o params recebido é params.
     - Quando usamos o nome da pasta (), ele não se torna rota.
     - O uso de _ no inicio no nome da pasta, torna ela privada.
+
+3 - Chamando APIS
+    - Por convensão criamos uma pasta api e dentro dela uma pasta products, que são as apis destinadas ao products
+    - 
