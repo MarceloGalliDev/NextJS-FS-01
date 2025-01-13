@@ -11,4 +11,24 @@
 
 3 - Chamando APIS
     - Por convensão criamos uma pasta api e dentro dela uma pasta products, que são as apis destinadas ao products
-    - 
+
+4 - Caching
+    - Todo FETCH com método GET ele tem caching por padrão.
+    - Para mudar esse formato, precisamos inserir um segundo parametro no fetch cache = "no-cache".
+    - Para incrementar o static generation, usamos um next: {revalidate: 5} = de 5 em 5 segundos vamos revalidar o cache.
+    - Esse método de manusear o caching ele é a nível de componente.
+    - Só é possível usar multiplos caching com server component, e usando fetch, com axios não funciona.
+    - O caching
+
+5 - Request Memorization
+    - So podemos usar quando é um server component.
+    - Só funciona se tivermos caching ativo.
+
+6 - Forçando o refresh
+    - Se nossa página receber algum parametro, ou usar cookies/ headers, ou fetch com no-store, ela vai gerar de forma On-Demand.
+    - Para força o dinamismo da página quando é um static page, padrão do next, usamos o:
+      - export const dynamic = "force-dynamic";
+
+    - Podemos usar também o unstable-caching, vide documentação next.
+
+7 - React Hook Form e Zod
