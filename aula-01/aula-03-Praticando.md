@@ -32,3 +32,12 @@
     - Podemos usar também o unstable-caching, vide documentação next.
 
 7 - React Hook Form e Zod
+    - Necessário criar o schema para fazer a validação com zod.
+    - O react hook form já possui integração com zod e vice versa.
+
+8 - Server Actions
+    - Usamos server actions para criar assincronismo em nível de servidor.
+    - Recomendações quando criamos um endpoint para somente solicitar dados como o GETm criamos em um data-access, quando usamos endpoint para gerenciar algum dado, como criar, deletar ou update, usamos o server actions 
+    - Uma server action é tida como função, mas transformada como um rota http pelo next.js
+    - 
+    

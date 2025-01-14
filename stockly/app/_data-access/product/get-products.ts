@@ -1,3 +1,5 @@
+// usamos somente em server components
+
 import "server-only";
 
 import { db } from "@/app/_lib/prisma";
