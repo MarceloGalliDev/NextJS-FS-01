@@ -39,5 +39,6 @@
     - Usamos server actions para criar assincronismo em nível de servidor.
     - Recomendações quando criamos um endpoint para somente solicitar dados como o GETm criamos em um data-access, quando usamos endpoint para gerenciar algum dado, como criar, deletar ou update, usamos o server actions 
     - Uma server action é tida como função, mas transformada como um rota http pelo next.js
-    - 
+    - O revalidatepath e revalida tanto a página quanto o caching da página.
+    - O uso do revalidateTag e revalidatePath, a diferença que o Path revalida tudo da página, e o Tag é especificado.
     
