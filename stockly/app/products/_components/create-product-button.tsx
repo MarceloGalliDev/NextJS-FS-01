@@ -18,6 +18,7 @@ import { NumericFormat } from 'react-number-format';
 import { useState } from "react";
 import { createProduct } from "@/app/_actions/product/create-product";
 import { CreateProductSchema,createProductSchema } from "@/app/_actions/product/create-product/schema";
+import { toast } from "sonner";
 
 const CreateProductButton = () => {
   const [dialogIsOpen,setDialogIsOpen] = useState(false);
@@ -36,8 +37,10 @@ const CreateProductButton = () => {
     try {
       await createProduct(data);
       setDialogIsOpen(false);
+      toast.success("Produto criado com sucesso");
     } catch (error) {
       console.log(error);
+      toast.error("Ocorreu um erro ao criar o produto");
     }
   }
 
