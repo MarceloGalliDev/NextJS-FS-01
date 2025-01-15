@@ -1,10 +1,27 @@
 "use client";
 
-import { createProduct } from "@/app/_actions/product/create-product";
-import { createProductSchema, CreateProductSchema } from "@/app/_actions/product/create-product/schema";
+import { upsertProduct } from "@/app/_actions/product/upsert-product";
+import {
+  upsertProductSchema,
+  UpsertProductSchema,
+} from "@/app/_actions/product/upsert-product/schema";
 import { Button } from "@/app/_components/ui/button";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/_components/ui/form";
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/_components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
@@ -13,37 +30,46 @@ import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 
 interface UpsertProductDialogContentProps {
+  defaultValues?: UpsertProductSchema;
   onSuccess?: () => void;
 }
 
-const UpsertProductDialogContent = ({onSuccess}: UpsertProductDialogContentProps) => {
-  const form = useForm<CreateProductSchema>({
+const UpsertProductDialogContent = ({
+  defaultValues,
+  onSuccess,
+}: UpsertProductDialogContentProps) => {
+  const form = useForm<UpsertProductSchema>({
     shouldUnregister: true,
-    resolver: zodResolver(createProductSchema),
-    defaultValues: {
+    resolver: zodResolver(upsertProductSchema),
+    defaultValues: defaultValues ?? {
       name: "",
       price: 0,
       stock: 1,
-    }
+    },
   });
 
-  const onSubmit = async (data: CreateProductSchema) => {
+  const onSubmit = async (data: UpsertProductSchema) => {
     try {
-      await createProduct(data);
+      await upsertProduct({...data, id: defaultValues?.id});
       onSuccess?.();
       toast.success("Produto criado com sucesso");
     } catch (error) {
       console.log(error);
       toast.error("Ocorreu um erro ao criar o produto");
     }
-  }
+  };
+
+  const isEditing = !!defaultValues;
+
   return (
     <DialogContent>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
           <DialogHeader>
-            <DialogTitle>Criar produto</DialogTitle>
+            <DialogTitle>
+              {isEditing ? "Editar " : "Criar "}
+              produto
+            </DialogTitle>
             <DialogDescription>Insira as informações abaixo</DialogDescription>
           </DialogHeader>
 
@@ -76,7 +102,9 @@ const UpsertProductDialogContent = ({onSuccess}: UpsertProductDialogContentProps
                     prefix="R$ "
                     allowNegative={false}
                     customInput={Input}
-                    onValueChange={(values) => field.onChange(values.floatValue)}
+                    onValueChange={(values) =>
+                      field.onChange(values.floatValue)
+                    }
                     {...field}
                     onChange={() => {}}
                   />
@@ -93,7 +121,11 @@ const UpsertProductDialogContent = ({onSuccess}: UpsertProductDialogContentProps
               <FormItem>
                 <FormLabel>Estoque do produto</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Digite o estoque do produto" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="Digite o estoque do produto"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,11 +134,17 @@ const UpsertProductDialogContent = ({onSuccess}: UpsertProductDialogContentProps
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="secondary" type="reset">Cancelar</Button>
+              <Button variant="secondary" type="reset">
+                Cancelar
+              </Button>
             </DialogClose>
-            <Button type="submit" disabled={form.formState.isSubmitting} className="gap-1.5">
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="gap-1.5"
+            >
               {form.formState.isSubmitting && (
-                <Loader2Icon className="animate-spin" size={16}/>
+                <Loader2Icon className="animate-spin" size={16} />
               )}
               Salvar
             </Button>
@@ -114,7 +152,7 @@ const UpsertProductDialogContent = ({onSuccess}: UpsertProductDialogContentProps
         </form>
       </Form>
     </DialogContent>
-  )
+  );
 };
 
 export default UpsertProductDialogContent;
