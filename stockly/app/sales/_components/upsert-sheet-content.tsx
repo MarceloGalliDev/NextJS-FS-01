@@ -2,7 +2,7 @@
 
 import { Button } from "@/app/_components/ui/button";
 import { Combobox, ComboboxOption } from "@/app/_components/ui/combobox";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/app/_components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
 import { SheetContent,SheetDescription,SheetHeader,SheetTitle } from "@/app/_components/ui/sheet"
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/table";
@@ -50,15 +50,24 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
   });
 
   const onSubmit = (data: FormSchema) => {
-    const selectedProduct = products.find(product => product.id === data.productId);
+    const selectedProduct = products.find((product) => product.id === data.productId);
     if (!selectedProduct) return;
 
     // aqui estamos pegando a lista anterior que é o ...product e adicionando um novo produto
-    setSelectedProducts((currenctProduct) => {
-      const existingProduct = currenctProduct.find((product => product.id === data.productId));
+    setSelectedProducts((currentProducts) => {
+      const existingProduct = currentProducts.find((product) => product.id === selectedProduct.id);
+      
       if (existingProduct) {
-        return currenctProduct.map((product) => {
-          if (product.id === data.productId) {
+        const productIsOutOfStock = existingProduct.quantity + data.quantity > selectedProduct.stock;
+        if (productIsOutOfStock) {
+          form.setError('quantity', {
+            message: "Quantidade indisponível em estoque.",
+          });
+          return currentProducts;
+        }
+        form.reset();
+        return currentProducts.map((product) => {
+          if (product.id === selectedProduct.id) {
             return {
               ...product,
               quantity: product.quantity + data.quantity,
@@ -67,17 +76,24 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
           return product;
         })
       }
+      const productIsOutOfStock = data.quantity > selectedProduct.stock;
+      if (productIsOutOfStock) {
+        form.setError('quantity', {
+          message: "Quantidade indisponível em estoque.",
+        });
+        return currentProducts;
+      }
+      form.reset();
       return [
-        ...currenctProduct,
+        ...currentProducts,
         {
-          id: selectedProduct.id,
-          name: selectedProduct.name,
+          ...selectedProduct,
           price: Number(selectedProduct.price),
           quantity: data.quantity,
         }
       ]
     })
-    form.reset();
+    
   };
 
   // useMemo so funcionará quando selectedProducts tiver alterações
@@ -118,6 +134,7 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -133,6 +150,7 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
                 <FormControl>
                   <Input {...field} type="number" placeholder="Insire a quantidade"/>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
