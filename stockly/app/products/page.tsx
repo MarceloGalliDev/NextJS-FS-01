@@ -9,7 +9,7 @@ const ProductsPage = async () => {
 
   return (
     <>
-      <div className="w-full space-y-8 p-8">
+      <div className="m-8 w-full space-y-8 p-8 rounded-lg bg-white">
         {/* ESQUERDA */}
         <div className="flex w-full items-center justify-between">
           <div className="space-y-1">
