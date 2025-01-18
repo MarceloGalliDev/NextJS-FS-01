@@ -4,16 +4,18 @@ import { Button } from "@/app/_components/ui/button";
 import { Combobox, ComboboxOption } from "@/app/_components/ui/combobox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
-import { SheetContent,SheetDescription,SheetHeader,SheetTitle } from "@/app/_components/ui/sheet"
+import { SheetContent,SheetDescription,SheetFooter,SheetHeader,SheetTitle } from "@/app/_components/ui/sheet"
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/app/_components/ui/table";
 import { formatCurrency } from "@/app/_helpers/currency";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Product } from "@prisma/client";
-import { PlusIcon } from "lucide-react";
+import { CheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SalesTableDropdownMenu from "./table-dropdown-menu";
+import { createSale } from "@/app/_actions/sale/create-sale";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   productId: z.string().uuid({
@@ -29,6 +31,7 @@ type FormSchema = z.infer<typeof formSchema>;
 interface UpsertSheetContentProps {
   products: Product[];
   productOptions: ComboboxOption[];
+  onSubmitSuccess: () => void;
 };
 
 interface SelectedProduct {
@@ -38,7 +41,7 @@ interface SelectedProduct {
   quantity: number;
 }
 
-const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProps) => {
+const UpsertSheetContent = ({ products, productOptions, onSubmitSuccess }: UpsertSheetContentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
 
   const form = useForm<FormSchema>({
@@ -93,7 +96,6 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
         }
       ]
     })
-    
   };
 
   // useMemo so funcionará quando selectedProducts tiver alterações
@@ -107,7 +109,22 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
     setSelectedProducts((currentProducts) => {
       return currentProducts.filter((product) => product.id !== productId);
     })
-  }
+  };
+
+  const onSubmitSale = async () => {
+    try {
+      await createSale({
+        products: selectedProducts.map(product => ({
+          id: product.id,
+          quantity: product.quantity
+        }))
+      });
+      toast.success("Venda realizada com sucesso!")
+      onSubmitSuccess();
+    } catch (error) {
+      toast.error("Venda realizada com sucesso!")
+    }
+  };
 
   return (
     <SheetContent className="!max-w-[700px]">
@@ -194,6 +211,12 @@ const UpsertSheetContent = ({ products, productOptions }: UpsertSheetContentProp
         </TableFooter>
       </Table>
 
+      <SheetFooter className="pt-6">
+        <Button className="w-full gap-2" disabled={selectedProducts.length === 0} onClick={onSubmitSale}>
+          <CheckIcon size={20} />
+          Finalizar venda
+        </Button>
+      </SheetFooter>
     </SheetContent>
   )
 };
