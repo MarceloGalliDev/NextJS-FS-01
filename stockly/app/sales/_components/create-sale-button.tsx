@@ -10,18 +10,21 @@ import { useState } from "react";
 interface CreateButtonSaleProps {
   products: Product[];
   productOptions: ComboboxOption[];
-};
+}
 
-const CreateSaleButton = (props: CreateButtonSaleProps) => {
+const UpsertSaleButton = (props: CreateButtonSaleProps) => {
   const [sheetIsOpen, setSheetIsOpen] = useState(false);
   return (
     <Sheet open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
       <SheetTrigger asChild>
         <Button>Nova Venda</Button>
       </SheetTrigger>
-      <UpsertSheetContent onSubmitSuccess={() => setSheetIsOpen(false)} {...props} />
+      <UpsertSheetContent
+        onSubmitSuccess={() => setSheetIsOpen(false)}
+        {...props}
+      />
     </Sheet>
-  )
+  );
 };
 
-export default CreateSaleButton;
+export default UpsertSaleButton;
