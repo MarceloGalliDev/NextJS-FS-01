@@ -14,6 +14,7 @@ export const upsertProduct = async (data: UpsertProductSchema) => {
     update: data,
   });
   revalidatePath("/products");
+  revalidatePath("/");
   // aqui usamos a tag vindo la do data-access
   revalidateTag("get-products");
 };
