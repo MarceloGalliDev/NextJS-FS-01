@@ -6,8 +6,8 @@ import { revalidatePath } from "next/cache";
 
 export const upsertSale = async (data: UpsertSaleSchema) => {
   upsertSaleSchema.parse({ data });
-  const isUpdate = Boolean(data.id)
-  
+  const isUpdate = Boolean(data.id);
+
   await db.$transaction(async (trx) => {
     if (isUpdate) {
       const existingSale = await trx.sale.findUnique({
@@ -23,15 +23,15 @@ export const upsertSale = async (data: UpsertSaleSchema) => {
 
       for (const product of existingSale.saleProducts) {
         await trx.product.update({
-          where: { id: product.produtctId },
+          where: { id: product.productId },
           data: {
             stock: {
-              increment: product.quantity
-            }
-          }
-        })
+              increment: product.quantity,
+            },
+          },
+        });
       }
-    };
+    }
 
     const sale = await trx.sale.create({
       data: {
@@ -59,7 +59,7 @@ export const upsertSale = async (data: UpsertSaleSchema) => {
       await trx.saleProduct.create({
         data: {
           saleId: sale.id,
-          produtctId: product.id,
+          productId: product.id,
           quantity: product.quantity,
           unitPrice: productFromDb.price,
         },
@@ -78,4 +78,6 @@ export const upsertSale = async (data: UpsertSaleSchema) => {
     }
   });
   revalidatePath("/products");
+  revalidatePath("/sales");
+  revalidatePath("/");
 };

@@ -24,7 +24,7 @@ CREATE TABLE "Sale" (
 CREATE TABLE "SaleProduct" (
     "id" TEXT NOT NULL,
     "saleId" TEXT NOT NULL,
-    "produtctId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
     "unitPrice" DECIMAL(10,2) NOT NULL,
     "quantity" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -37,4 +37,4 @@ CREATE TABLE "SaleProduct" (
 ALTER TABLE "SaleProduct" ADD CONSTRAINT "SaleProduct_saleId_fkey" FOREIGN KEY ("saleId") REFERENCES "Sale"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SaleProduct" ADD CONSTRAINT "SaleProduct_produtctId_fkey" FOREIGN KEY ("produtctId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SaleProduct" ADD CONSTRAINT "SaleProduct_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

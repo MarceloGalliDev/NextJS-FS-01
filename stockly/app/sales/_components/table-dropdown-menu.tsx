@@ -3,7 +3,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from "@/app/_components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/app/_components/ui/dropdown-menu";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
-import { Sale } from "@prisma/client";
 import { MoreHorizontalIcon,ClipboardCopyIcon,EditIcon,TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 import UpsertSheetContent from "./upsert-sheet-content";

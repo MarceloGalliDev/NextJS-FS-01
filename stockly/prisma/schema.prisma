@@ -35,8 +35,8 @@ model SaleProduct {
   id         String   @id @default(uuid())
   saleId     String
   sale       Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  produtctId String
-  product    Product  @relation(fields: [produtctId], references: [id], onDelete: Cascade)
+  productId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   unitPrice  Decimal  @db.Decimal(10, 2)
   quantity   Int
   createdAt  DateTime @default(now())
