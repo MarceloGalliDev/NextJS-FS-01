@@ -2,10 +2,17 @@ import 'server-only'
 
 import { db } from "@/app/_lib/prisma";
 import dayjs from "dayjs";
+import { ProductStatus } from '../product/get-products';
 
 export interface DayTotalRevenue {
   day: string;
   totalRevenue: number;
+};
+
+interface MostSoldProducts {
+  name: string;
+  totalSold: number;
+  status: ProductStatus;
 };
 
 interface DashboardDto {
@@ -15,6 +22,7 @@ interface DashboardDto {
   totalStock: number;
   totalProducts: number;
   totalLast14DaysRevenue: DayTotalRevenue[];
+  mostSoldProducts: MostSoldProducts[];
 };
 
 
@@ -69,18 +77,31 @@ export const getDashboard = async (): Promise<DashboardDto> => {
 
   const totalProductsPromise = db.product.count();
 
+  const mostSoldProductsQuery = `
+    SELECT "Product"."name", SUM("SaleProduct"."quantity") as "totalSold", "Product"."price", "Product"."stock"
+    FROM "SaleProduct"
+    JOIN "Product" ON "SaleProduct"."productId" = "Product"."id"
+    GROUP BY "Product"."name", "Product"."price", "Product"."stock"
+    ORDER BY "totalSold" DESC
+    LIMIT 10;
+  `;
+
+  const mostSoldProductsPromise = db.$queryRawUnsafe<{name: string, totalSold: number}[]>(mostSoldProductsQuery);
+
   const [
     totalRevenue,
     todayRevenue,
     totalSales,
     totalStock,
-    totalProducts
+    totalProducts,
+    mostSoldProducts
   ] = await Promise.all([
     totalRevenuePromise,
     todayRevenuePromise,
     totalSalesPromise,
     totalStockPromise,
-    totalProductsPromise
+    totalProductsPromise,
+    mostSoldProductsPromise
   ]);
 
   return {
@@ -90,5 +111,10 @@ export const getDashboard = async (): Promise<DashboardDto> => {
     totalStock: Number(totalStock._sum.stock),
     totalProducts,
     totalLast14DaysRevenue,
+    mostSoldProducts: mostSoldProducts.map((product) => ({
+      name: product.name,
+      totalSold: product.totalSold,
+      status: product.totalSold > 0 ? "IN_STOCK" : "OUT_OF_STOCK"
+    }))
   }
 };
